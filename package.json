@@ -4,12 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "build:web": "expo build:web",
-    "lint": "expo lint"
+    "start:web": "expo start --web",
+    "build": "expo export:web"
   },
   "expo": {
     "platforms": [
@@ -17,9 +13,9 @@
       "android",
       "web"
     ],
-    "icon": null,
-    "splash": null,
-     "web": { "favicon": null }
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    }
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -59,6 +55,7 @@
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
     "react-redux": "^9.2.0",
+    "serve": "^14.2.5",
     "yup": "^1.7.0"
   },
   "devDependencies": {
