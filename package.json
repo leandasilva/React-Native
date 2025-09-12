@@ -11,8 +11,19 @@
     "build:web": "expo build:web",
     "lint": "expo lint"
   },
+  "expo": {
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "icon": null,
+    "splash": null,
+     "web": { "favicon": null }
+  },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
+    "@expo/webpack-config": "^19.0.1",
     "@hookform/resolvers": "^5.2.1",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
@@ -21,8 +32,8 @@
     "@react-navigation/stack": "^7.4.8",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.11.0",
-    "expo": "~53.0.22",
     "expo-blur": "~14.1.5",
+    "expo-cli": "^6.3.10",
     "expo-constants": "~17.1.7",
     "expo-font": "~13.3.2",
     "expo-haptics": "~14.1.4",
@@ -36,8 +47,8 @@
     "expo-system-ui": "~5.0.11",
     "expo-web-browser": "~14.2.0",
     "firebase": "^12.2.1",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
     "react-native": "0.79.6",
     "react-native-gesture-handler": "~2.24.0",
@@ -45,17 +56,19 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
-    "react-native-web": "~0.20.0",
+    "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
     "react-redux": "^9.2.0",
     "yup": "^1.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/react": "~19.0.10",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "@types/react-native": "^0.73.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
+    "expo": "^54.0.3",
     "typescript": "~5.8.3"
   },
   "private": true
