@@ -1,20 +1,24 @@
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
-import { Image, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, Platform, View } from 'react-native';
 import { Button, TextInput } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
-import { addPost } from '../store'; // Ensure addPost is exported from ../store.ts
+import { createPost } from '../features/userSlice';
+import { useAppDispatch } from '../hooks'; // dispatch tipado
 
-import type { NavigationProp } from '@react-navigation/native';
+const screenWidth = Dimensions.get('window').width;
 
-type UserFormProps = {
-  navigation: NavigationProp<any>;
-};
-
-export default function UserForm({ navigation }: UserFormProps) {
+export default function UserForm({ navigation }: any) {
   const [text, setText] = useState('');
-  const [image, setImage] = useState<string | null>(null);
-  const dispatch = useDispatch();
+  const [image, setImage] = useState<any>(null);
+  const [imageUri, setImageUri] = useState<string | null>(null); // para web preview
+  const dispatch = useAppDispatch();
+
+  // Limpiar URL antigua en web para no filtrar memoria
+  useEffect(() => {
+    return () => {
+      if (Platform.OS === 'web' && imageUri) URL.revokeObjectURL(imageUri);
+    };
+  }, [imageUri]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -23,34 +27,101 @@ export default function UserForm({ navigation }: UserFormProps) {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (Platform.OS === 'web') {
+        const asset = result.assets[0];
+        // @ts-ignore: File property is available on web
+        const file = asset.file ?? asset; // Prefer asset.file if available, fallback to asset
+        setImage(file);
+        if (file instanceof File) {
+          setImageUri(URL.createObjectURL(file));
+        } else {
+          setImageUri(asset.uri);
+        }
+      } else {
+        setImage(result.assets[0].uri); // móvil: URI
+        setImageUri(result.assets[0].uri);
+      }
     }
   };
 
-  const handleSubmit = () => {
-    if (text.trim() || image) {
-      dispatch(addPost({ text, image }));
+  const handleSubmit = async () => {
+    if (!text.trim() && !image) return;
+
+    const formData = new FormData();
+    formData.append('text', text);
+
+    if (image) {
+      if (Platform.OS === 'web') {
+        formData.append('image', image as File);
+      } else {
+        formData.append('image', {
+          uri: image,
+          type: 'image/jpeg', // o 'image/png' según corresponda
+          name: 'photo.jpg',
+        } as any);
+      }
+    }
+
+    try {
+      await dispatch(createPost(formData));
       setText('');
       setImage(null);
-      navigation.navigate('Posts'); // ir a la pantalla de publicaciones
+      setImageUri(null);
+      navigation.navigate('Posts');
+    } catch (err) {
+      console.error('Error al subir post:', err);
     }
   };
 
   return (
-    <View style={{ padding: 20 }}>
+    <View
+      style={{
+        padding: 10,
+        margin: 10,
+        borderRadius: 8,
+        alignSelf: 'center',
+        width: screenWidth * 0.85,
+        backgroundColor: '#fff',
+      }}
+    >
       <TextInput
         label="Escribe algo..."
         value={text}
         onChangeText={setText}
-        style={{ marginBottom: 10 }}
+        style={{ marginBottom: 8, height: 40, fontSize: 14 }}
       />
-      <Button mode="outlined" onPress={pickImage} style={{ marginBottom: 10 }}>
+
+      <Button
+        mode="outlined"
+        onPress={pickImage}
+        style={{ marginBottom: 8, paddingVertical: 2 }}
+        labelStyle={{ fontSize: 12 }}
+      >
         Seleccionar Foto
       </Button>
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200, marginBottom: 10 }} />
+
+      {imageUri && (
+        <Image
+          source={{ uri: imageUri }}
+          style={{
+            width: screenWidth * 0.4,
+            height: screenWidth * 0.3,
+            aspectRatio: 1,
+            alignSelf: 'center',
+            marginBottom: 2,
+            borderRadius: 2,
+          }}
+          resizeMode="contain"
+        />
       )}
-      <Button mode="contained" onPress={handleSubmit}>
+
+      <Button
+        mode="contained"
+        onPress={handleSubmit}
+        style={{ paddingVertical: 4 }}
+        labelStyle={{ fontSize: 13 }}
+        disabled={!text.trim() && !image}
+      >
         Publicar
       </Button>
     </View>

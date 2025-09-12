@@ -1,7 +1,12 @@
-import axios from 'axios';
+// src/api/postsApi.ts
+import axios from "axios";
 
-export const api = axios.create({
-  // Cambiá por tu API. JSONPlaceholder para pruebas:
-  baseURL: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://jsonplaceholder.typicode.com',
-  timeout: 10000,
+const api = axios.create({
+  baseURL: "https://api-posts-9i6e.onrender.com", // cambia si tu backend corre en otra URL/puerto
+  // timeout, headers, etc si necesitás
 });
+
+export const fetchPostsAPI = () => api.get("/posts");
+export const createPostAPI = (formData: FormData) => api.post("/addposts", formData);
+export const updatePostAPI = (id: string, data: any) => api.put(`/updateposts/${id}`, data);
+export const deletePostAPI = (id: string) => api.delete(`/removeposts/${id}`);
