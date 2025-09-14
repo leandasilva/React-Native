@@ -49,11 +49,11 @@ export default function PostsScreen() {
       renderItem={({ item }) => (
         <Card style={[styles.card, { width: cardWidth }]}>
           {item.image && (
-            <Image
-              source={{ uri: item.image }}
-              style={styles.image}
-              resizeMode="cover"
-            />
+           <Image
+            source={{ uri: item.image }}
+            style={styles.image}
+            resizeMode="contain"
+          />
           )}
           <View style={styles.textContainer}>
             <Text style={styles.text}>{item.text}</Text>
@@ -122,8 +122,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
-
-
 /*
  <Button
                 mode="outlined"
